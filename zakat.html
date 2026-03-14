@@ -10,10 +10,16 @@
 </head>
 <body>
     <div class="pattern-overlay"></div>
-    <div style="padding: 40px 5%; text-align: center;">
-        <a href="dashboard.html" style="color: var(--gold-primary); text-decoration: none; margin-bottom: 30px; display: inline-block;">
+    <div style="padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border);">
+        <div class="logo-container" style="display: flex; align-items: center; gap: 8px;">
+            <img src="logo.png" alt="UmmahVerse Logo" style="height: 30px; border-radius: 6px;">
+            <div class="logo gold-gradient-text" style="font-size: 18px;">UMMAHVERSE</div>
+        </div>
+        <a href="dashboard.html" style="color: var(--gold-primary); text-decoration: none; font-size: 14px;">
             <i class="fas fa-arrow-left"></i> <span data-i18n="back_dashboard">Back to Dashboard</span>
         </a>
+    </div>
+    <div style="padding: 40px 5%; text-align: center;">
         <h1 class="playfair gold-gradient-text" style="font-size: 48px; margin-bottom: 20px;" data-i18n="zakat_calc">Zakat Calculator</h1>
         <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 40px;" data-i18n="zakat_description">
             Calculate your Zakat based on your current savings, gold, silver, and other assets.

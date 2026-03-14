@@ -101,9 +101,9 @@
     <div class="dashboard-container">
         <!-- Sidebar Navigation -->
         <aside class="side-nav">
-            <div class="logo-container" style="display: flex; align-items: center; gap: 12px; margin-bottom: 50px; padding-left: 20px;">
-                <img src="logo.png" alt="UmmahVerse Logo" style="height: 45px; border-radius: 10px;">
-                <div class="logo gold-gradient-text" style="margin-bottom: 0; padding-left: 0;">UMMAHVERSE</div>
+            <div class="logo-container" style="display: flex; align-items: center; gap: 8px; margin-bottom: 50px; padding-left: 15px;">
+                <img src="logo.png" alt="UmmahVerse Logo" style="height: 35px; border-radius: 8px;">
+                <div class="logo gold-gradient-text" style="font-size: 20px; margin-bottom: 0; padding-left: 0;">UMMAHVERSE</div>
             </div>
             <nav>
                 <a href="dashboard.html" class="nav-item active" aria-label="Home Dashboard" data-i18n="nav_home"><i class="fas fa-th-large"></i> Home</a>
@@ -318,8 +318,13 @@
                     
                     // Update Hijri date in the UI
                     const hijri = data.data.date.hijri;
-                    const dateText = `${hijri.day} ${hijri.month.en} ${hijri.year}`;
-                    const arDateText = `${toArabicNumerals(hijri.day)} ${hijri.month.ar} ${toArabicNumerals(hijri.year)}`;
+                    // Sanitize month name (remove macrons/accents)
+                    const sanitize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    const monthEn = sanitize(hijri.month.en);
+                    const monthAr = hijri.month.ar;
+                    
+                    const dateText = `${hijri.day} ${monthEn} 2026`;
+                    const arDateText = `${toArabicNumerals(hijri.day)} ${monthAr} ٢٠٢٦`;
                     const lang = localStorage.getItem('app_lang') || 'en';
                     document.getElementById('hijri-date').innerText = lang === 'ar' ? arDateText : dateText;
 
