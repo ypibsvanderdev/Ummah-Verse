@@ -1,0 +1,17 @@
+{
+  "name": "UmmahVerse",
+  "short_name": "UmmahVerse",
+  "description": "The Islamic Super App for Your Daily Life",
+  "start_url": "/dashboard.html",
+  "display": "standalone",
+  "background_color": "#064E3B",
+  "theme_color": "#064E3B",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
