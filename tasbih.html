@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasbih Counter | UmmahVerse</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
+    <style>
+        .tasbih-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .counter-circle {
+            width: 300px;
+            height: 300px;
+            border: 8px solid var(--gold-primary);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s ease;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .counter-circle:active {
+            transform: scale(0.95);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .count-val {
+            font-size: 100px;
+            font-weight: 800;
+        }
+
+        .goal-indicator {
+            position: absolute;
+            bottom: -50px;
+            color: var(--text-muted);
+        }
+
+        .reset-btn {
+            margin-top: 80px;
+            background: none;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            padding: 10px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .reset-btn:hover {
+            color: var(--gold-primary);
+            border-color: var(--gold-primary);
+        }
+        
+        .dhikr-text {
+            font-size: 24px;
+            margin-bottom: 40px;
+            color: var(--gold-primary);
+            font-family: 'Amiri', serif;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="pattern-overlay"></div>
+
+    <div class="tasbih-container">
+        <a href="dashboard.html" style="position: absolute; top: 40px; left: 40px; color: var(--gold-primary); text-decoration: none;">
+            <i class="fas fa-arrow-left"></i> <span data-i18n="back_dashboard">Back to Dashboard</span>
+        </a>
+
+        <div class="dhikr-text" id="active-dhikr" data-i18n="nav_prayer">SubhanAllah</div>
+
+        <div class="counter-circle" id="tap-area">
+            <div class="count-val" id="counter">0</div>
+            <div class="goal-indicator"><span data-i18n="target">Target</span>: 33</div>
+        </div>
+
+        <button class="reset-btn" id="reset-btn" aria-label="Reset Tasbih Counter" data-i18n="reset_session">Reset Session</button>
+        
+        <div style="margin-top: 40px; display: flex; gap: 20px;">
+            <div class="glass-card" style="padding: 10px 20px; cursor: pointer;" onclick="changeDhikr('SubhanAllah')">SubhanAllah</div>
+            <div class="glass-card" style="padding: 10px 20px; cursor: pointer;" onclick="changeDhikr('Alhamdulillah')">Alhamdulillah</div>
+            <div class="glass-card" style="padding: 10px 20px; cursor: pointer;" onclick="changeDhikr('Allahu Akbar')">Allahu Akbar</div>
+        </div>
+    </div>
+
+    <script>
+        const counterElem = document.getElementById('counter');
+        const tapArea = document.getElementById('tap-area');
+        const resetBtn = document.getElementById('reset-btn');
+        const activeDhikrElem = document.getElementById('active-dhikr');
+
+        let count = parseInt(localStorage.getItem('tasbih_count')) || 0;
+        let activeDhikr = localStorage.getItem('tasbih_dhikr') || 'SubhanAllah';
+
+        function init() {
+            counterElem.innerText = count;
+            activeDhikrElem.innerText = activeDhikr;
+        }
+
+        function saveState() {
+            localStorage.setItem('tasbih_count', count);
+            localStorage.setItem('tasbih_dhikr', activeDhikr);
+        }
+
+        function updateCounter() {
+            count++;
+            counterElem.innerText = count;
+            saveState();
+            
+            // Simulate haptic feedback
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(50);
+            }
+
+            // Target reached alert
+            if (count % 33 === 0) {
+                tapArea.style.borderColor = '#10B981';
+                setTimeout(() => tapArea.style.borderColor = '', 500);
+            }
+        }
+
+        function reset() {
+            count = 0;
+            counterElem.innerText = count;
+            saveState();
+        }
+
+        function changeDhikr(txt) {
+            activeDhikr = txt;
+            activeDhikrElem.innerText = activeDhikr;
+            reset();
+        }
+
+        tapArea.addEventListener('click', updateCounter);
+        resetBtn.addEventListener('click', reset);
+        init();
+        initTranslation();
+    </script>
+</body>
+</html>

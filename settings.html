@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | UmmahVerse</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="pattern-overlay"></div>
+    <div style="padding: 40px 5%; text-align: center;">
+        <a href="dashboard.html" style="color: var(--gold-primary); text-decoration: none; margin-bottom: 30px; display: inline-block;">
+            <i class="fas fa-arrow-left"></i> <span data-i18n="back_dashboard">Back to Dashboard</span>
+        </a>
+        <h1 class="playfair gold-gradient-text" style="font-size: 48px; margin-bottom: 20px;" data-i18n="nav_settings">Settings</h1>
+        
+        <div class="glass-card" style="max-width: 600px; margin: 0 auto; padding: 40px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">
+                <span data-i18n="notifications">Notifications</span>
+                <input type="checkbox" checked>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">
+                <span data-i18n="high_accuracy">High Accuracy Location</span>
+                <input type="checkbox" id="high-accuracy" checked onchange="localStorage.setItem('high_accuracy', this.checked)">
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+                <h3 class="playfair" style="margin-bottom: 15px; color: var(--gold-primary);" data-i18n="calculation_method">Calculation Method</h3>
+                <select id="prayer-method" onchange="localStorage.setItem('prayerMethod', this.value)" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 12px; color: white; border-radius: 10px; outline: none;">
+                    <option value="1">University of Islamic Sciences, Karachi</option>
+                    <option value="2" selected>Islamic Society of North America (ISNA)</option>
+                    <option value="3">Muslim World League (MWL)</option>
+                    <option value="4">Umm Al-Qura University, Makkah</option>
+                    <option value="5">Egyptian General Authority of Survey</option>
+                    <option value="7">Institute of Geophysics, University of Tehran</option>
+                    <option value="8">Gulf Region</option>
+                    <option value="9">Kuwait</option>
+                    <option value="10">Qatar</option>
+                    <option value="11">Majlis Ugama Islam Singapura, Singapore</option>
+                    <option value="12">Union Organization islamic de France</option>
+                    <option value="13">Diyanet İşleri Başkanlığı, Turkey</option>
+                    <option value="14">Spiritual Administration of Muslims of Russia</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <h3 class="playfair" style="margin-bottom: 15px; color: var(--gold-primary);" data-i18n="madhab">Asr Madhab (School)</h3>
+                <select id="asr-madhab" onchange="localStorage.setItem('asrMadhab', this.value)" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 12px; color: white; border-radius: 10px; outline: none;">
+                    <option value="0" selected>Shafi, Maliki, Hanbali (Standard)</option>
+                    <option value="1">Hanafi</option>
+                </select>
+            </div>
+            
+            <h3 class="playfair" style="margin-bottom: 20px; color: var(--gold-primary);" data-i18n="language">Language</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="glass-card" id="lang-en" onclick="changeAppLang('en')" style="padding: 20px; text-align: center; cursor: pointer; border-color: var(--gold-primary);">
+                    <div style="font-size: 24px; margin-bottom: 5px;">🇬🇧</div>
+                    <div style="font-weight: 600;">English</div>
+                </div>
+                <div class="glass-card" id="lang-ar" onclick="changeAppLang('ar')" style="padding: 20px; text-align: center; cursor: pointer;">
+                    <div style="font-size: 24px; margin-bottom: 5px;">🇸🇦</div>
+                    <div style="font-weight: 600;">العربية</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="i18n.js"></script>
+    <script>
+        function changeAppLang(lang) {
+            setLanguage(lang);
+            updateUI(lang);
+        }
+
+        function updateUI(lang) {
+            document.querySelectorAll('.glass-card').forEach(card => card.style.borderColor = '');
+            const activeCard = document.getElementById(`lang-${lang}`);
+            if (activeCard) activeCard.style.borderColor = 'var(--gold-primary)';
+        }
+
+        window.onload = () => {
+            initTranslation();
+            const currentLang = localStorage.getItem('app_lang') || 'en';
+            updateUI(currentLang);
+
+            // Load saved settings
+            const method = localStorage.getItem('prayerMethod') || '2';
+            const madhab = localStorage.getItem('asrMadhab') || '0';
+            const highAcc = localStorage.getItem('high_accuracy') !== 'false';
+
+            document.getElementById('prayer-method').value = method;
+            document.getElementById('asr-madhab').value = madhab;
+            document.getElementById('high-accuracy').checked = highAcc;
+        };
+    </script>
+</body>
+</html>

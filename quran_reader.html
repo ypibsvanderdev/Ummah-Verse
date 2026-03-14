@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran Reader | UmmahVerse</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
+    <style>
+        .reader-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .surah-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .ayah-list {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .ayah-item {
+            text-align: right;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 30px;
+        }
+
+        .ayah-text {
+            font-size: 36px;
+            font-family: 'Amiri', serif;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: var(--gold-primary);
+        }
+
+        .ayah-translation {
+            text-align: left;
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--gold-primary);
+            text-decoration: none;
+            margin-bottom: 40px;
+        }
+
+        .surah-selector {
+            background: var(--glass-bg);
+            color: white;
+            border: 1px solid var(--gold-primary);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        /* Highlighting and Bookmarking Styles */
+        .word-span {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+            padding: 0 2px;
+            border-radius: 4px;
+        }
+
+        .word-span:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        .word-span.highlighted {
+            background: rgba(212, 175, 55, 0.4);
+            color: white;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .ayah-item.bookmarked {
+            border-left: 4px solid var(--gold-primary);
+            padding-left: 15px;
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .bookmark-btn.active {
+            color: var(--gold-primary);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="pattern-overlay"></div>
+
+    <aside class="side-nav">
+        <div class="logo gold-gradient-text">UMMAHVERSE</div>
+        <nav>
+            <a href="dashboard.html" class="nav-item" aria-label="Home Dashboard" data-i18n="nav_home"><i class="fas fa-th-large"></i> Home</a>
+            <a href="quran_reader.html" class="nav-item active" aria-label="Read Quran" data-i18n="nav_quran"><i class="fas fa-book-open"></i> Quran</a>
+            <a href="dashboard.html#daily-salah" class="nav-item" aria-label="Prayer Times" data-i18n="nav_prayer"><i class="fas fa-mosque"></i> Prayer</a>
+            <a href="zakat.html" class="nav-item" aria-label="Zakat Calculator" data-i18n="nav_zakat"><i class="fas fa-hand-holding-heart"></i> Zakat</a>
+            <a href="settings.html" class="nav-item" style="margin-top: 50px;" aria-label="Settings" data-i18n="nav_settings"><i class="fas fa-cog"></i> Settings</a>
+        </nav>
+    </aside>
+
+    <div class="main-panel">
+        <div class="reader-container">
+            <a href="dashboard.html" class="nav-back"><i class="fas fa-arrow-left"></i> <span data-i18n="back_dashboard">Back to Dashboard</span></a>
+
+        <div class="surah-header">
+            <h1 class="gold-gradient-text playfair" id="surah-name">Surah Al-Fatiha</h1>
+            <p id="surah-info">The Opening • 7 Verses</p>
+        </div>
+
+        <select id="surah-select" class="surah-selector">
+            <option value="1">1. Al-Fatiha</option>
+            <option value="2">2. Al-Baqarah</option>
+            <option value="3">3. Al-Imran</option>
+            <!-- More added via JS -->
+        </select>
+
+        <button class="reset-btn" id="reset-btn" aria-label="Refresh Quran Reader" onclick="location.reload()" data-i18n="refresh_page">Refresh Page</button>
+        <div class="ayah-list" id="ayah-container">
+            <!-- ayahs loaded here -->
+            <div style="text-align: center;">Loading Divine Words...</div>
+        </div>
+        
+        <!-- Global Audio Player -->
+        <div id="audio-player-container" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--glass-bg); padding: 15px 30px; border-radius: 50px; border: 1px solid var(--gold-primary); display: none; align-items: center; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <i class="fas fa-play" id="play-pause-btn" style="color: var(--gold-primary); cursor: pointer; font-size: 20px;"></i>
+            <div id="now-playing" style="font-size: 14px;">Surah - Ayah</div>
+            <audio id="quran-audio"></audio>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        initTranslation();
+        const ayahContainer = document.getElementById('ayah-container');
+        const surahSelect = document.getElementById('surah-select');
+        const surahNameElem = document.getElementById('surah-name');
+        const surahInfoElem = document.getElementById('surah-info');
+
+        async function init() {
+            try {
+                // Load Surah list
+                const res = await fetch('https://api.alquran.cloud/v1/surah');
+                const data = await res.json();
+                surahSelect.innerHTML = data.data.map(s => `<option value="${s.number}">${s.number}. ${s.englishName}</option>`).join('');
+                
+                // Default load
+                loadSurah(1);
+            } catch (e) {
+                console.error("Quran Init Error:", e);
+                ayahContainer.innerHTML = '<div style="text-align: center; color: var(--gold-primary);">Unable to connect to the divine source. Please check your internet connection.</div>';
+            }
+        }
+
+        async function loadSurah(num) {
+            try {
+                // Stop audio if playing
+                if (!audio.paused) {
+                    audio.pause();
+                    audioContainer.style.display = 'none';
+                }
+
+                ayahContainer.innerHTML = '<div style="text-align: center;">Loading...</div>';
+                
+                const [arRes, enRes] = await Promise.all([
+                    fetch(`https://api.alquran.cloud/v1/surah/${num}`),
+                    fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`)
+                ]);
+                
+                const arData = await arRes.json();
+                const enData = await enRes.json();
+
+                if (!arData.data || !enData.data) throw new Error("Invalid API response");
+
+                surahNameElem.innerText = arData.data.englishName;
+                surahInfoElem.innerText = `${arData.data.englishNameTranslation} • ${arData.data.numberOfAyahs} Verses`;
+
+                const bookmarks = JSON.parse(localStorage.getItem('um_ayah_bookmarks') || '{}');
+                const highlights = JSON.parse(localStorage.getItem('um_word_highlights') || '{}');
+
+                ayahContainer.innerHTML = arData.data.ayahs.map((ayah, i) => {
+                    const ayahKey = `b_${num}_${ayah.numberInSurah}`;
+                    const isBookmarked = bookmarks[ayahKey];
+                    
+                    // Split Arabic text into words for highlighting
+                    const words = ayah.text.split(' ');
+                    const wordsHtml = words.map((word, wIdx) => {
+                        const wordKey = `${ayahKey}_w${wIdx}`;
+                        const isHighlighted = highlights[wordKey];
+                        return `<span class="word-span ${isHighlighted ? 'highlighted' : ''}" 
+                                      onclick="toggleWordHighlight('${wordKey}', this)" 
+                                      data-word-key="${wordKey}">${word}</span>`;
+                    }).join(' ');
+
+                    return `
+                    <div class="ayah-item ${isBookmarked ? 'bookmarked' : ''}" id="${ayahKey}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <button onclick="playAyah(${ayah.number}, '${arData.data.englishName}', ${ayah.numberInSurah})" class="btn-gold" style="padding: 10px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;" aria-label="Play Recitation">
+                                    <i class="fas fa-play" style="font-size: 12px;"></i>
+                                </button>
+                                <button onclick="toggleAyahBookmark('${ayahKey}')" class="bookmark-btn ${isBookmarked ? 'active' : ''}" id="btn-${ayahKey}" aria-label="Bookmark Ayah">
+                                    <i class="fas fa-bookmark"></i>
+                                </button>
+                            </div>
+                            <div class="ayah-text">${wordsHtml}</div>
+                        </div>
+                        <div class="ayah-translation">${enData.data.ayahs[i].text}</div>
+                        <div style="font-size: 12px; margin-top: 10px; color: var(--gold-primary)">${ayah.numberInSurah}</div>
+                    </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Quran Load Error:", e);
+                ayahContainer.innerHTML = '<div style="text-align: center; color: var(--gold-primary);">Failed to load Surah. Please try again later.</div>';
+            }
+        }
+
+        function toggleAyahBookmark(key) {
+            const bookmarks = JSON.parse(localStorage.getItem('um_ayah_bookmarks') || '{}');
+            const btn = document.getElementById(`btn-${key}`);
+            const item = document.getElementById(key);
+
+            if (bookmarks[key]) {
+                delete bookmarks[key];
+                btn.classList.remove('active');
+                item.classList.remove('bookmarked');
+            } else {
+                bookmarks[key] = true;
+                btn.classList.add('active');
+                item.classList.add('bookmarked');
+            }
+            localStorage.setItem('um_ayah_bookmarks', JSON.stringify(bookmarks));
+        }
+
+        function toggleWordHighlight(wordKey, element) {
+            const highlights = JSON.parse(localStorage.getItem('um_word_highlights') || '{}');
+            
+            if (highlights[wordKey]) {
+                delete highlights[wordKey];
+                element.classList.remove('highlighted');
+            } else {
+                highlights[wordKey] = true;
+                element.classList.add('highlighted');
+            }
+            localStorage.setItem('um_word_highlights', JSON.stringify(highlights));
+            
+            // Prevent event bubbling to parent ayah click if it existed
+            event.stopPropagation();
+        }
+
+        const audio = document.getElementById('quran-audio');
+        const audioContainer = document.getElementById('audio-player-container');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const nowPlayingTxt = document.getElementById('now-playing');
+
+        function playAyah(num, surah, ayahNum) {
+            audioContainer.style.display = 'flex';
+            audio.src = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${num}.mp3`;
+            audio.play();
+            nowPlayingTxt.innerText = `${surah} - Ayah ${ayahNum}`;
+            playPauseBtn.className = 'fas fa-pause';
+        }
+
+        playPauseBtn.onclick = () => {
+            if (audio.paused) {
+                audio.play();
+                playPauseBtn.className = 'fas fa-pause';
+            } else {
+                audio.pause();
+                playPauseBtn.className = 'fas fa-play';
+            }
+        };
+
+        surahSelect.addEventListener('change', (e) => loadSurah(e.target.value));
+
+        init();
+    </script>
+    <script src="i18n.js"></script>
+</body>
+</html>

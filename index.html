@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UmmahVerse | The Islamic Super App for Your Daily Life</title>
+    <meta name="description" content="UmmahVerse is a powerful all-in-one Islamic super app designed for the global Muslim community, featuring prayer times, Quran, Zakat calculator, and more.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
+</head>
+<body>
+    <div class="pattern-overlay"></div>
+
+    <header class="navbar">
+        <div class="logo-container" style="display: flex; align-items: center; gap: 10px;">
+            <img src="logo.png" alt="UmmahVerse Logo" style="height: 40px; border-radius: 8px;">
+            <div class="logo gold-gradient-text">UMMAHVERSE</div>
+        </div>
+        <nav class="nav-links">
+            <a href="dashboard.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" data-i18n="nav_quran">Quran</a>
+        </nav>
+        <a href="dashboard.html" class="btn-gold" aria-label="Launch UmmahVerse App" data-i18n="nav_home">Launch App</a>
+    </header>
+
+    <main class="hero">
+        <h1 class="playfair gold-gradient-text" style="font-size: 84px; line-height: 1.1; margin-bottom: 24px;" data-i18n="greeting">Assalamu Alaikum</h1>
+        <p data-i18n="community_desc">Experience the world's most comprehensive Islamic digital ecosystem. Designed for the global Ummah, refined for excellence.</p>
+        <div style="margin-top: 40px; display: flex; gap: 20px; justify-content: center;">
+            <a href="dashboard.html" class="btn-gold" data-i18n="nav_home">Launch App</a>
+            <a href="#features" class="glass-card" style="padding: 15px 30px; text-decoration: none; color: white;" data-i18n="nav_academy">Explore Features</a>
+        </div>
+
+        <div class="glass-card" style="padding: 40px; margin-top: 60px;">
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Trusted by Muslims worldwide</p>
+            <div style="display: flex; gap: 40px; justify-content: center; opacity: 0.6;">
+                <i class="fas fa-certificate" title="Secure" aria-label="Secure Certificate"></i>
+                <i class="fas fa-globe" title="Global" aria-label="Global Reach"></i>
+                <i class="fas fa-shield-alt" title="Private" aria-label="Privacy Shield"></i>
+            </div>
+        </div>
+    </main>
+
+    <section style="padding: 100px 5%; text-align: center;">
+        <h2 style="font-size: 48px; margin-bottom: 60px;" class="playfair">A Unified Vision for the Ummah</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1200px; margin: 0 auto;">
+            <span class="glass-card" style="padding: 12px 24px; border-radius: 50px; font-size: 14px;">5,000+ Features</span>
+            <span class="glass-card" style="padding: 12px 24px; border-radius: 50px; font-size: 14px;">Halal Living</span>
+            <span class="glass-card" style="padding: 12px 24px; border-radius: 50px; font-size: 14px;">Zakat System</span>
+            <span class="glass-card" style="padding: 12px 24px; border-radius: 50px; font-size: 14px;">Islamic Academy</span>
+            <span class="glass-card" style="padding: 12px 24px; border-radius: 50px; font-size: 14px;">Kids Mode</span>
+        </div>
+    </section>
+
+    <footer style="padding: 60px 5%; border-top: 1px solid var(--glass-border); text-align: center;">
+        <div class="logo-container" style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <img src="logo.png" alt="UmmahVerse Logo" style="height: 60px; border-radius: 12px;">
+            <div class="logo gold-gradient-text">UMMAHVERSE</div>
+        </div>
+        <p style="font-size: 14px;">Empowering the Global Ummah through Technology and Faith.</p>
+        <p style="margin-top: 20px; font-size: 12px; color: rgba(255,255,255,0.3);">&copy; 2024 UmmahVerse Inc. All Rights Reserved.</p>
+    </footer>
+    <script>
+        window.onload = initTranslation;
+    </script>
+</body>
+</html>

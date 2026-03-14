@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zakat Calculator | UmmahVerse</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
+</head>
+<body>
+    <div class="pattern-overlay"></div>
+    <div style="padding: 40px 5%; text-align: center;">
+        <a href="dashboard.html" style="color: var(--gold-primary); text-decoration: none; margin-bottom: 30px; display: inline-block;">
+            <i class="fas fa-arrow-left"></i> <span data-i18n="back_dashboard">Back to Dashboard</span>
+        </a>
+        <h1 class="playfair gold-gradient-text" style="font-size: 48px; margin-bottom: 20px;" data-i18n="zakat_calc">Zakat Calculator</h1>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 40px;" data-i18n="zakat_description">
+            Calculate your Zakat based on your current savings, gold, silver, and other assets.
+        </p>
+
+        <div class="glass-card" style="max-width: 600px; margin: 0 auto; padding: 40px; text-align: left;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                <div>
+                    <label style="display: block; margin-bottom: 10px; font-size: 14px; color: var(--text-muted);" data-i18n="cash_on_hand">Cash on Hand ($)</label>
+                    <input type="number" id="cash" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 12px; color: white; border-radius: 10px; outline: none;" placeholder="0.00">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 10px; font-size: 14px; color: var(--text-muted);" data-i18n="gold_value">Gold Value ($)</label>
+                    <input type="number" id="gold" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 12px; color: white; border-radius: 10px; outline: none;" placeholder="0.00">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 10px; font-size: 14px; color: var(--text-muted);" data-i18n="silver_value">Silver Value ($)</label>
+                    <input type="number" id="silver" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 12px; color: white; border-radius: 10px; outline: none;" placeholder="0.00">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 10px; font-size: 14px; color: var(--text-muted);" data-i18n="investments">Investments ($)</label>
+                    <input type="number" id="investments" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 12px; color: white; border-radius: 10px; outline: none;" placeholder="0.00">
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 10px; font-size: 14px; color: var(--text-muted);" data-i18n="debts">Debts/Liabilities ($)</label>
+                <input type="number" id="debts" style="width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 12px; color: white; border-radius: 10px; outline: none;" placeholder="0.00">
+            </div>
+
+            <button class="btn-gold" style="width: 100%;" onclick="calculateZakat()" data-i18n="calculate">Calculate Zakat</button>
+            
+            <div id="zakat-result" style="margin-top: 30px; text-align: center; display: none;">
+                <div style="font-size: 14px; color: var(--text-muted);" data-i18n="total_zakatable">Total Zakatable Amount</div>
+                <div id="total-amount" style="font-size: 24px; color: white; margin-bottom: 10px;">$0.00</div>
+                <div style="font-size: 14px; color: var(--text-muted);" data-i18n="zakat_due">Zakat Due (2.5%)</div>
+                <div id="zakat-amount" style="font-size: 36px; color: var(--gold-primary); font-weight: 700; margin-top: 5px;">$0.00</div>
+                <p style="font-size: 11px; color: var(--text-muted); margin-top: 15px;" data-i18n="nisab_info">Nisab is currently estimated at $6000.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateZakat() {
+            const cash = parseFloat(document.getElementById('cash').value) || 0;
+            const gold = parseFloat(document.getElementById('gold').value) || 0;
+            const silver = parseFloat(document.getElementById('silver').value) || 0;
+            const investments = parseFloat(document.getElementById('investments').value) || 0;
+            const debts = parseFloat(document.getElementById('debts').value) || 0;
+            
+            const totalAssets = cash + gold + silver + investments - debts;
+            const nisab = 6000;
+            
+            const zakatResultDiv = document.getElementById('zakat-result');
+            const totalAmountDiv = document.getElementById('total-amount');
+            const zakatAmountDiv = document.getElementById('zakat-amount');
+
+            zakatResultDiv.style.display = 'block';
+            totalAmountDiv.innerText = `$${totalAssets.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+
+            if (totalAssets >= nisab) {
+                const zakat = totalAssets * 0.025;
+                zakatAmountDiv.innerText = `$${zakat.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            } else {
+                const lang = localStorage.getItem('app_lang') || 'en';
+                zakatAmountDiv.innerText = (translations[lang] && translations[lang]['below_nisab']) 
+                    ? translations[lang]['below_nisab'] 
+                    : "Below Nisab";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTranslation();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qibla Finder | UmmahVerse</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="adhan.min.js"></script>
+    <script src="i18n.js"></script>
+    <style>
+        .qibla-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .compass {
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            border: 4px solid var(--gold-primary);
+            position: relative;
+            background: var(--glass-bg);
+            box-shadow: var(--shadow-premium);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .needle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 140px;
+            background: linear-gradient(to top, transparent 50%, #FF4757 50%);
+            transform: translate(-50%, -100%);
+            border-radius: 4px;
+        }
+
+        .kaaba-icon {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--gold-primary);
+            font-size: 24px;
+        }
+
+        .direction-info {
+            margin-top: 60px;
+        }
+
+        .angle-val {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gold-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="pattern-overlay"></div>
+    <div style="padding: 40px 5%; text-align: center;">
+        <a href="dashboard.html" style="color: var(--gold-primary); text-decoration: none; margin-bottom: 30px; display: inline-block;">
+            <i class="fas fa-arrow-left"></i> <span data-i18n="back_dashboard">Back to Dashboard</span>
+        </a>
+        <h1 class="playfair gold-gradient-text" style="font-size: 48px; margin-bottom: 20px;" data-i18n="qibla_finder">Qibla Finder</h1>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 40px;" data-i18n="qibla_desc">
+            Align your heart and device towards the Kaaba.
+        </p>
+    </div>
+
+    <div class="qibla-container" style="height: auto;">
+        <div class="compass" id="compass">
+            <div class="kaaba-icon"><i class="fas fa-kaaba"></i></div>
+            <div class="needle"></div>
+        </div>
+
+        <div class="direction-info">
+            <div id="qibla-direction" data-i18n="finding_location">Finding your location...</div>
+            <div class="angle-val" id="angle">--°</div>
+            <p style="color: var(--text-muted); margin-top: 10px;" data-i18n="relative_to_north">Relative to North</p>
+        </div>
+    </div>
+
+    <script src="adhan.min.js"></script>
+    <script>
+        const compassElem = document.getElementById('compass');
+        const angleElem = document.getElementById('angle');
+        const qiblaDirectionElem = document.getElementById('qibla-direction');
+        
+        let qiblaAngle = 0;
+        let deviceHeading = 0;
+
+        async function initQibla() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    const coords = new adhan.Coordinates(latitude, longitude);
+                    qiblaAngle = adhan.Qibla(coords);
+
+                    angleElem.innerText = `${Math.round(qiblaAngle)}°`;
+                    updateCompass();
+
+                    const lang = localStorage.getItem('app_lang') || 'en';
+                    qiblaDirectionElem.innerText = (translations[lang] && translations[lang]['align_qibla']) 
+                        ? translations[lang]['align_qibla'] 
+                        : "Align your device towards the Kaaba";
+                    
+                    startOrientationTracking();
+                }, error => {
+                    handleLocationError();
+                });
+            } else {
+                handleLocationError();
+            }
+        }
+
+        function handleLocationError() {
+            const lang = localStorage.getItem('app_lang') || 'en';
+            qiblaDirectionElem.innerText = (translations[lang] && translations[lang]['location_denied']) 
+                ? translations[lang]['location_denied'] 
+                : "Location access denied. Please enable GPS.";
+        }
+
+        function startOrientationTracking() {
+            // Check for iOS permissions
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response == 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                window.addEventListener('deviceorientationabsolute', handleOrientation);
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        }
+
+        function handleOrientation(event) {
+            let heading = 0;
+            if (event.webkitCompassHeading) {
+                // iOS
+                heading = event.webkitCompassHeading;
+            } else if (event.absolute && event.alpha !== null) {
+                // Android/Standard
+                heading = 360 - event.alpha;
+            } else if (event.alpha !== null) {
+                // Fallback for non-absolute
+                heading = 360 - event.alpha;
+            } else {
+                return;
+            }
+
+            deviceHeading = heading;
+            updateCompass();
+        }
+
+        function updateCompass() {
+            // The needle should point towards qiblaAngle
+            // The compass dial itself rotates based on device heading
+            // Total rotation = qiblaAngle - deviceHeading
+            const totalRotation = qiblaAngle - deviceHeading;
+            compassElem.style.transform = `rotate(${totalRotation}deg)`;
+        }
+
+        initQibla();
+        initTranslation();
+    </script>
+</body>
+</html>
+```
