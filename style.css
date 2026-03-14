@@ -153,6 +153,47 @@ h1, h2, .playfair {
     transform: scale(1.05);
     box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
 }
+/* Sidebar Navigation (shared across all pages) */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+}
+
+.side-nav {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 40px 20px;
+    border-right: 1px solid var(--glass-border);
+}
+
+.side-nav .logo {
+    margin-bottom: 60px;
+    padding-left: 20px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px 20px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 15px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-item.active, .nav-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--gold-primary);
+}
+
+.main-panel {
+    padding: 40px 5%;
+    overflow-y: auto;
+}
+
 /* Responsive Design */
 @media (max-width: 992px) {
     .dashboard-container {
