@@ -194,56 +194,397 @@ h1, h2, .playfair {
     overflow-y: auto;
 }
 
-/* Responsive Design */
+/* ===== MOBILE BOTTOM NAV BAR ===== */
+.mobile-bottom-nav {
+    display: none;
+}
+
+.mobile-toggle {
+    display: none;
+}
+
+/* ===== RESPONSIVE: TABLET (max 992px) ===== */
 @media (max-width: 992px) {
     .dashboard-container {
         grid-template-columns: 1fr;
     }
 
     .side-nav {
-        position: fixed;
-        left: -280px;
-        top: 0;
-        bottom: 0;
-        width: 280px;
-        z-index: 1000;
-        transition: left 0.3s ease;
-        background: var(--emerald-deep);
-    }
-
-    .side-nav.active {
-        left: 0;
-    }
-
-    .mobile-toggle {
-        display: block !important;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 1001;
-        background: var(--gold-primary);
-        color: var(--emerald-deep);
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        display: none;
     }
 
     .main-panel {
-        padding-top: 80px;
+        padding: 20px 4% 100px;
+    }
+
+    /* Show bottom nav on tablets */
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(4, 40, 30, 0.95);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--glass-border);
+        padding: 8px 0;
+        padding-bottom: max(8px, env(safe-area-inset-bottom));
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .bottom-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .bottom-nav-item i {
+        font-size: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .bottom-nav-item.active {
+        color: var(--gold-primary);
+    }
+
+    .bottom-nav-item.active::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        background: var(--gold-primary);
+        border-radius: 0 0 4px 4px;
     }
 
     .progress-section {
         grid-template-columns: 1fr;
     }
+
+    /* -- Page header bar on sub-pages -- */
+    .page-top-bar {
+        padding: 15px 5% !important;
+    }
 }
 
-.mobile-toggle {
-    display: none;
+/* ===== RESPONSIVE: PHONE (max 600px) ===== */
+@media (max-width: 600px) {
+
+    /* -- Landing / Hero page -- */
+    .navbar {
+        padding: 16px 5%;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .navbar .logo {
+        font-size: 20px;
+    }
+
+    .navbar .btn-gold {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .hero {
+        padding: 50px 5% 40px;
+    }
+
+    .hero h1 {
+        font-size: 38px !important;
+        line-height: 1.2;
+        margin-bottom: 16px;
+    }
+
+    .hero p {
+        font-size: 15px;
+        margin-bottom: 28px;
+    }
+
+    .hero .btn-gold {
+        padding: 12px 28px;
+        font-size: 15px;
+    }
+
+    .hero .glass-card {
+        padding: 24px !important;
+        margin-top: 30px !important;
+    }
+
+    /* -- Dashboard -- */
+    .main-panel {
+        padding: 16px 4% 100px;
+    }
+
+    .main-panel header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        margin-bottom: 28px !important;
+    }
+
+    .main-panel header h1 {
+        font-size: 22px !important;
+    }
+
+    .main-panel header .glass-card {
+        padding: 8px 14px !important;
+        font-size: 13px;
+    }
+
+    /* Prayer grid */
+    .prayer-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .prayer-card {
+        padding: 14px 8px !important;
+    }
+
+    .prayer-card .prayer-name {
+        font-size: 11px !important;
+    }
+
+    .prayer-time {
+        font-size: 16px !important;
+    }
+
+    .prayer-status {
+        font-size: 9px !important;
+    }
+
+    /* Progress section */
+    .progress-section {
+        gap: 16px !important;
+        margin-top: 24px !important;
+    }
+
+    .progress-section .glass-card {
+        padding: 20px !important;
+    }
+
+    /* Quick actions */
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    /* Glass cards on mobile */
+    .glass-card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .glass-card:hover {
+        transform: none;
+    }
+
+    /* -- Quran Reader -- */
+    .reader-container {
+        margin: 16px auto !important;
+        padding: 0 12px !important;
+    }
+
+    .surah-header {
+        margin-bottom: 30px !important;
+    }
+
+    .surah-header h1 {
+        font-size: 28px !important;
+    }
+
+    .surah-header p {
+        font-size: 14px;
+    }
+
+    .surah-selector {
+        width: 100% !important;
+        font-size: 14px !important;
+        padding: 12px !important;
+    }
+
+    .ayah-list {
+        gap: 24px !important;
+    }
+
+    .ayah-text {
+        font-size: 24px !important;
+        line-height: 1.7 !important;
+    }
+
+    .ayah-translation {
+        font-size: 14px !important;
+        line-height: 1.6;
+    }
+
+    .ayah-item {
+        padding-bottom: 20px !important;
+    }
+
+    /* Audio player mobile */
+    #audio-player-container {
+        left: 10px !important;
+        right: 10px !important;
+        transform: none !important;
+        bottom: 80px !important;
+        padding: 12px 20px !important;
+        border-radius: 20px !important;
+        font-size: 12px;
+    }
+
+    .nav-back {
+        font-size: 14px;
+        margin-bottom: 20px !important;
+    }
+
+    .reset-btn {
+        font-size: 13px;
+        padding: 8px 20px;
+    }
+
+    /* -- Tasbih -- */
+    .counter-circle {
+        width: 220px !important;
+        height: 220px !important;
+    }
+
+    .count-val {
+        font-size: 64px !important;
+    }
+
+    .dhikr-text {
+        font-size: 18px !important;
+        margin-bottom: 24px !important;
+    }
+
+    .tasbih-container .glass-card {
+        padding: 8px 14px !important;
+        font-size: 12px !important;
+    }
+
+    /* -- Qibla / Compass -- */
+    .compass {
+        width: 240px !important;
+        height: 240px !important;
+    }
+
+    .needle {
+        height: 100px !important;
+    }
+
+    .angle-val {
+        font-size: 24px !important;
+    }
+
+    /* -- Zakat -- */
+    .zakat-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    /* -- Settings -- */
+    .settings-lang-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+    }
+
+    /* -- Page titles on sub-pages -- */
+    .page-title {
+        font-size: 32px !important;
+    }
+
+    /* -- General sub-page content -- */
+    .sub-page-content {
+        padding: 20px 4% 100px !important;
+    }
+
+    .sub-page-content .glass-card {
+        padding: 24px !important;
+    }
+
+    /* -- Buttons on mobile -- */
+    .btn-gold {
+        padding: 12px 28px;
+        font-size: 15px;
+        border-radius: 30px;
+    }
+
+    /* -- Footer (landing page) -- */
+    footer {
+        padding: 40px 5% !important;
+    }
+
+    footer .logo {
+        font-size: 20px !important;
+    }
+
+    footer p {
+        font-size: 12px !important;
+    }
+
+    /* -- Feature pills on landing -- */
+    .feature-pills {
+        gap: 8px !important;
+    }
+
+    .feature-pills .glass-card {
+        padding: 8px 16px !important;
+        font-size: 12px !important;
+    }
+
+    /* Section titles */
+    section h2 {
+        font-size: 28px !important;
+    }
+}
+
+/* ===== RESPONSIVE: SMALL PHONE (max 380px) ===== */
+@media (max-width: 380px) {
+    .hero h1 {
+        font-size: 30px !important;
+    }
+
+    .prayer-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .counter-circle {
+        width: 180px !important;
+        height: 180px !important;
+    }
+
+    .count-val {
+        font-size: 48px !important;
+    }
+
+    .compass {
+        width: 200px !important;
+        height: 200px !important;
+    }
+
+    .bottom-nav-item {
+        font-size: 9px;
+        padding: 6px 8px;
+    }
+
+    .bottom-nav-item i {
+        font-size: 18px;
+    }
 }
 
 /* RTL Support */
@@ -254,6 +595,8 @@ body.rtl {
 body.rtl .side-nav {
     left: auto;
     right: 0;
+    border-right: none;
+    border-left: 1px solid var(--glass-border);
 }
 
 body.rtl .main-panel {
@@ -268,18 +611,7 @@ body.rtl .nav-item i {
 
 @media (max-width: 992px) {
     body.rtl .side-nav {
-        right: -280px;
-        left: auto;
-    }
-
-    body.rtl .side-nav.active {
-        right: 0;
-        left: auto;
-    }
-
-    body.rtl .mobile-toggle {
-        left: auto;
-        right: 20px;
+        display: none;
     }
 
     body.rtl .main-panel {

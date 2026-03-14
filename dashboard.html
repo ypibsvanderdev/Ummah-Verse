@@ -14,46 +14,6 @@
         });
     </script>
     <style>
-        .dashboard-container {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            min-height: 100vh;
-        }
-
-        .side-nav {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 40px 20px;
-            border-right: 1px solid var(--glass-border);
-        }
-
-        .side-nav .logo {
-            margin-bottom: 60px;
-            padding-left: 20px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 18px 20px;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 15px;
-            margin-bottom: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item.active, .nav-item:hover {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--gold-primary);
-        }
-
-        .main-panel {
-            padding: 40px 5%;
-            overflow-y: auto;
-        }
-
         .prayer-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -93,10 +53,6 @@
 </head>
 <body>
     <div class="pattern-overlay"></div>
-    
-    <div class="mobile-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </div>
     
     <div class="dashboard-container">
         <!-- Sidebar Navigation -->
@@ -196,7 +152,7 @@
 
             <!-- Quick Actions -->
             <h3 class="playfair" style="margin-top: 40px;" data-i18n="quick_actions">Quick Actions</h3>
-            <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px;">
+            <div class="quick-actions-grid" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px;">
                 <a href="quran_reader.html" class="glass-card" style="text-align: center; padding: 20px; text-decoration: none; color: inherit;">
                     <i class="fas fa-quran" style="margin-bottom: 10px; color: var(--gold-primary);"></i>
                     <div style="font-size: 13px;" data-i18n="read_quran">Read Quran</div>
@@ -216,6 +172,15 @@
             </div>
         </main>
     </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-item active"><i class="fas fa-th-large"></i><span>Home</span></a>
+        <a href="quran_reader.html" class="bottom-nav-item"><i class="fas fa-book-open"></i><span>Quran</span></a>
+        <a href="tasbih.html" class="bottom-nav-item"><i class="fas fa-fingerprint"></i><span>Tasbih</span></a>
+        <a href="zakat.html" class="bottom-nav-item"><i class="fas fa-hand-holding-heart"></i><span>Zakat</span></a>
+        <a href="settings.html" class="bottom-nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+    </nav>
 
     <!-- Dynamic Logic -->
     <script src="adhan.min.js"></script>

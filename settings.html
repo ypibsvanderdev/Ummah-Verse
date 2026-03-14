@@ -19,7 +19,7 @@
         </a>
     </div>
     <div style="padding: 40px 5%; text-align: center;">
-        <h1 class="playfair gold-gradient-text" style="font-size: 48px; margin-bottom: 20px;" data-i18n="nav_settings">Settings</h1>
+        <h1 class="playfair gold-gradient-text page-title" style="font-size: 48px; margin-bottom: 20px;" data-i18n="nav_settings">Settings</h1>
         
         <div class="glass-card" style="max-width: 600px; margin: 0 auto; padding: 40px; text-align: left;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">
@@ -59,7 +59,7 @@
             </div>
             
             <h3 class="playfair" style="margin-bottom: 20px; color: var(--gold-primary);" data-i18n="language">Language</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="settings-lang-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="glass-card" id="lang-en" onclick="changeAppLang('en')" style="padding: 20px; text-align: center; cursor: pointer; border-color: var(--gold-primary);">
                     <div style="font-size: 24px; margin-bottom: 5px;">🇬🇧</div>
                     <div style="font-weight: 600;">English</div>
@@ -100,5 +100,14 @@
             document.getElementById('high-accuracy').checked = highAcc;
         };
     </script>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="dashboard.html" class="bottom-nav-item"><i class="fas fa-th-large"></i><span>Home</span></a>
+        <a href="quran_reader.html" class="bottom-nav-item"><i class="fas fa-book-open"></i><span>Quran</span></a>
+        <a href="tasbih.html" class="bottom-nav-item"><i class="fas fa-fingerprint"></i><span>Tasbih</span></a>
+        <a href="zakat.html" class="bottom-nav-item"><i class="fas fa-hand-holding-heart"></i><span>Zakat</span></a>
+        <a href="settings.html" class="bottom-nav-item active"><i class="fas fa-cog"></i><span>Settings</span></a>
+    </nav>
 </body>
 </html>
