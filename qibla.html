@@ -9,54 +9,219 @@
     <script src="adhan.min.js"></script>
     <script src="i18n.js"></script>
     <style>
-        .qibla-container {
-            height: 100vh;
+        .qibla-page {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
+            padding-bottom: 100px;
         }
 
-        .compass {
-            width: 320px;
-            height: 320px;
-            border-radius: 50%;
-            border: 4px solid var(--gold-primary);
+        .compass-wrapper {
             position: relative;
-            background: var(--glass-bg);
-            box-shadow: var(--shadow-premium);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
         }
 
-        .needle {
+        /* The outer ring stays fixed — it's your reference frame */
+        .compass-ring {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(212, 175, 55, 0.3);
+            position: relative;
+            background: rgba(6, 78, 59, 0.4);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* The inner dial rotates based on device heading */
+        .compass-dial {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.15);
+            will-change: transform;
+        }
+
+        /* Cardinal direction markers on the rotating dial */
+        .cardinal {
+            position: absolute;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cardinal.north {
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #FF4757;
+            font-size: 16px;
+        }
+
+        .cardinal.east {
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cardinal.south {
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .cardinal.west {
+            left: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Qibla marker on the dial — positioned at the Qibla angle */
+        .qibla-marker {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 4px;
-            height: 140px;
-            background: linear-gradient(to top, transparent 50%, #FF4757 50%);
-            transform: translate(-50%, -100%);
-            border-radius: 4px;
+            transform-origin: 0 0;
+            /* height = radius of dial */
+            height: 120px;
+            width: 2px;
+            pointer-events: none;
         }
 
-        .kaaba-icon {
+        .qibla-marker-icon {
             position: absolute;
-            top: 20px;
+            top: -16px;
             left: 50%;
             transform: translateX(-50%);
             color: var(--gold-primary);
-            font-size: 24px;
+            font-size: 22px;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
+        }
+
+        .qibla-marker-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to top, transparent, var(--gold-primary));
+            opacity: 0.6;
+        }
+
+        /* Fixed pointer at top of compass (shows which direction phone is facing) */
+        .compass-pointer {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 16px solid var(--gold-primary);
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+
+        /* Center dot */
+        .compass-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--gold-primary);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            z-index: 5;
         }
 
         .direction-info {
-            margin-top: 60px;
+            margin-top: 40px;
+            text-align: center;
         }
 
         .angle-val {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
             color: var(--gold-primary);
+        }
+
+        .heading-live {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .status-badge.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.waiting {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-primary);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .status-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.7); }
+        }
+
+        .enable-compass-btn {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+            color: var(--emerald-deep);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .enable-compass-btn:active {
+            transform: scale(0.95);
+        }
+
+        .enable-compass-btn i {
+            margin-right: 8px;
         }
     </style>
 </head>
@@ -71,109 +236,199 @@
             <i class="fas fa-arrow-left"></i> <span data-i18n="back_dashboard">Back to Dashboard</span>
         </a>
     </div>
-    <div style="padding: 40px 5%; text-align: center;">
-        <h1 class="playfair gold-gradient-text page-title" style="font-size: 48px; margin-bottom: 20px;" data-i18n="qibla_finder">Qibla Finder</h1>
-        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 40px;" data-i18n="qibla_desc">
-            Align your heart and device towards the Kaaba.
-        </p>
-    </div>
 
-    <div class="qibla-container" style="height: auto;">
-        <div class="compass" id="compass">
-            <div class="kaaba-icon"><i class="fas fa-kaaba"></i></div>
-            <div class="needle"></div>
+    <div class="qibla-page">
+        <div style="padding: 30px 5% 10px; text-align: center;">
+            <h1 class="playfair gold-gradient-text page-title" style="font-size: 48px; margin-bottom: 12px;" data-i18n="qibla_finder">Qibla Finder</h1>
+            <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto;" data-i18n="qibla_desc">
+                Align your heart and device towards the Kaaba.
+            </p>
+        </div>
+
+        <!-- Compass -->
+        <div class="compass-wrapper">
+            <div class="compass-pointer"></div>
+            <div class="compass-ring">
+                <div class="compass-dial" id="compass-dial">
+                    <div class="cardinal north">N</div>
+                    <div class="cardinal east">E</div>
+                    <div class="cardinal south">S</div>
+                    <div class="cardinal west">W</div>
+
+                    <!-- Qibla direction marker (rotated via JS based on calculated angle) -->
+                    <div class="qibla-marker" id="qibla-marker">
+                        <div class="qibla-marker-line"></div>
+                        <div class="qibla-marker-icon"><i class="fas fa-kaaba"></i></div>
+                    </div>
+                </div>
+                <div class="compass-center"></div>
+            </div>
         </div>
 
         <div class="direction-info">
-            <div id="qibla-direction" data-i18n="finding_location">Finding your location...</div>
+            <div id="qibla-status" data-i18n="finding_location">Finding your location...</div>
             <div class="angle-val" id="angle">--°</div>
-            <p style="color: var(--text-muted); margin-top: 10px;" data-i18n="relative_to_north">Relative to North</p>
+            <p style="color: var(--text-muted); margin-top: 4px; font-size: 13px;" data-i18n="relative_to_north">Qibla bearing from North</p>
+            <div class="heading-live" id="heading-live"></div>
+            <div id="status-container"></div>
         </div>
+
+        <!-- iOS needs a user tap to request compass permission -->
+        <button class="enable-compass-btn" id="enable-compass-btn" style="display: none;" onclick="requestCompassPermission()">
+            <i class="fas fa-compass"></i> Enable Compass
+        </button>
     </div>
 
-    <script src="adhan.min.js"></script>
     <script>
-        const compassElem = document.getElementById('compass');
+        const compassDial = document.getElementById('compass-dial');
+        const qiblaMarker = document.getElementById('qibla-marker');
         const angleElem = document.getElementById('angle');
-        const qiblaDirectionElem = document.getElementById('qibla-direction');
-        
-        let qiblaAngle = 0;
-        let deviceHeading = 0;
+        const statusElem = document.getElementById('qibla-status');
+        const headingLive = document.getElementById('heading-live');
+        const statusContainer = document.getElementById('status-container');
+        const enableBtn = document.getElementById('enable-compass-btn');
 
-        async function initQibla() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const { latitude, longitude } = position.coords;
-                    const coords = new adhan.Coordinates(latitude, longitude);
-                    qiblaAngle = adhan.Qibla(coords);
+        let qiblaAngle = 0;       // Qibla bearing from true north (degrees)
+        let currentHeading = 0;   // Smoothed device heading
+        let targetHeading = 0;    // Raw latest heading from sensor
+        let compassActive = false;
+        let animFrameId = null;
 
-                    angleElem.innerText = `${Math.round(qiblaAngle)}°`;
-                    updateCompass();
-
-                    const lang = localStorage.getItem('app_lang') || 'en';
-                    qiblaDirectionElem.innerText = (translations[lang] && translations[lang]['align_qibla']) 
-                        ? translations[lang]['align_qibla'] 
-                        : "Align your device towards the Kaaba";
-                    
-                    startOrientationTracking();
-                }, error => {
-                    handleLocationError();
-                });
-            } else {
-                handleLocationError();
-            }
-        }
-
-        function handleLocationError() {
-            const lang = localStorage.getItem('app_lang') || 'en';
-            qiblaDirectionElem.innerText = (translations[lang] && translations[lang]['location_denied']) 
-                ? translations[lang]['location_denied'] 
-                : "Location access denied. Please enable GPS.";
-        }
-
-        function startOrientationTracking() {
-            // Check for iOS permissions
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(response => {
-                        if (response == 'granted') {
-                            window.addEventListener('deviceorientation', handleOrientation);
-                        }
-                    })
-                    .catch(console.error);
-            } else {
-                window.addEventListener('deviceorientationabsolute', handleOrientation);
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
-        }
-
-        function handleOrientation(event) {
-            let heading = 0;
-            if (event.webkitCompassHeading) {
-                // iOS
-                heading = event.webkitCompassHeading;
-            } else if (event.absolute && event.alpha !== null) {
-                // Android/Standard
-                heading = 360 - event.alpha;
-            } else if (event.alpha !== null) {
-                // Fallback for non-absolute
-                heading = 360 - event.alpha;
-            } else {
+        // ====== INIT: Get location, calculate Qibla ======
+        function initQibla() {
+            if (!("geolocation" in navigator)) {
+                showStatus('Location not supported on this device.', 'waiting');
                 return;
             }
 
-            deviceHeading = heading;
-            updateCompass();
+            navigator.geolocation.getCurrentPosition(position => {
+                const { latitude, longitude } = position.coords;
+                const coords = new adhan.Coordinates(latitude, longitude);
+                qiblaAngle = adhan.Qibla(coords);
+
+                angleElem.innerText = `${Math.round(qiblaAngle)}°`;
+
+                // Position the Qibla marker on the compass dial at the correct angle
+                // The marker line originates from center, pointing outward at qiblaAngle
+                qiblaMarker.style.transform = `rotate(${qiblaAngle}deg) translate(-50%, -100%)`;
+
+                showStatus('Qibla direction calculated', 'waiting');
+                startCompass();
+            }, error => {
+                showStatus('Location access denied. Please enable GPS.', 'waiting');
+            }, { enableHighAccuracy: true });
         }
 
-        function updateCompass() {
-            // The needle should point towards qiblaAngle
-            // The compass dial itself rotates based on device heading
-            // Total rotation = qiblaAngle - deviceHeading
-            const totalRotation = qiblaAngle - deviceHeading;
-            compassElem.style.transform = `rotate(${totalRotation}deg)`;
+        // ====== START COMPASS ======
+        function startCompass() {
+            const needsPermission = typeof DeviceOrientationEvent !== 'undefined' 
+                && typeof DeviceOrientationEvent.requestPermission === 'function';
+
+            if (needsPermission) {
+                // iOS 13+ — MUST request permission from a user gesture
+                enableBtn.style.display = 'inline-block';
+                showStatus('Tap the button below to activate your compass', 'waiting');
+            } else {
+                // Android / other browsers — just start listening
+                attachOrientationListeners();
+            }
         }
 
+        // ====== iOS PERMISSION REQUEST (must be from user tap) ======
+        function requestCompassPermission() {
+            DeviceOrientationEvent.requestPermission()
+                .then(response => {
+                    if (response === 'granted') {
+                        enableBtn.style.display = 'none';
+                        attachOrientationListeners();
+                    } else {
+                        showStatus('Compass permission denied.', 'waiting');
+                    }
+                })
+                .catch(err => {
+                    console.error('Compass permission error:', err);
+                    showStatus('Could not access compass. Try reloading.', 'waiting');
+                });
+        }
+
+        // ====== ATTACH SENSOR LISTENERS ======
+        function attachOrientationListeners() {
+            // Prefer absolute orientation (gives true north on Android)
+            window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+            // Fallback
+            window.addEventListener('deviceorientation', handleOrientation, true);
+
+            // Start the smooth animation loop
+            compassActive = true;
+            showStatus('Compass active — point your phone around', 'active');
+            animateCompass();
+        }
+
+        // ====== HANDLE ORIENTATION DATA ======
+        function handleOrientation(event) {
+            let heading = null;
+
+            if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
+                // iOS — webkitCompassHeading gives degrees from magnetic north
+                heading = event.webkitCompassHeading;
+            } else if (event.alpha !== null) {
+                // Android / standard — alpha is rotation around z-axis
+                // For absolute orientation events, (360 - alpha) gives compass heading
+                heading = (360 - event.alpha) % 360;
+            }
+
+            if (heading !== null) {
+                targetHeading = heading;
+
+                if (!compassActive) {
+                    compassActive = true;
+                    showStatus('Compass active — point your phone around', 'active');
+                    animateCompass();
+                }
+            }
+        }
+
+        // ====== SMOOTH ANIMATION LOOP (60fps) ======
+        function animateCompass() {
+            if (!compassActive) return;
+
+            // Low-pass filter: smoothly interpolate toward target heading
+            // Handle the 360° → 0° wrap-around
+            let diff = targetHeading - currentHeading;
+
+            // Normalize difference to [-180, 180]
+            if (diff > 180) diff -= 360;
+            if (diff < -180) diff += 360;
+
+            // Ease toward target (0.15 = smooth but responsive)
+            currentHeading += diff * 0.15;
+
+            // Normalize to [0, 360)
+            if (currentHeading < 0) currentHeading += 360;
+            if (currentHeading >= 360) currentHeading -= 360;
+
+            // Rotate the dial: the dial shows cardinal directions, so we
+            // rotate it by -heading to keep North pointing toward true north
+            compassDial.style.transform = `rotate(${-currentHeading}deg)`;
+
+            // Update live heading display
+            headingLive.innerText = `Your heading: ${Math.round(currentHeading)}°`;
+
+            animFrameId = requestAnimationFrame(animateCompass);
+        }
+
+        // ====== STATUS BADGE ======
+        function showStatus(text, type) {
+            statusElem.innerText = text;
+            statusContainer.innerHTML = `
+                <div class="status-badge ${type}">
+                    <span class="pulse-dot"></span>
+                    ${type === 'active' ? 'Live Tracking' : 'Waiting'}
+                </div>
+            `;
+        }
+
+        // ====== GO ======
         initQibla();
         initTranslation();
     </script>
@@ -188,3 +443,4 @@
     </nav>
 </body>
 </html>
+
